@@ -356,11 +356,11 @@ public class SubscriptionManagerTest extends TestHarness {
                 List<LoggedRequest> requests = findAll(getRequestedFor(urlMatching("/v2/subscribe.*")));
                 assertTrue(requests.size() >= 1);
 
-                if (message.getMessage().getAsJsonObject().get("text").getAsString().equals("Message")) {
+                if (message.getMessage().get("text").asText().equals("Message")) {
                     gotMessage1.set(true);
-                } else if (message.getMessage().getAsJsonObject().get("text").getAsString().equals("Message3")) {
+                } else if (message.getMessage().get("text").asText().equals("Message3")) {
                     gotMessage2.set(true);
-                } else if (message.getMessage().getAsJsonObject().get("text").getAsString().equals("Message10")) {
+                } else if (message.getMessage().get("text").asText().equals("Message10")) {
                     gotMessage3.set(true);
                 }
             }
@@ -393,7 +393,7 @@ public class SubscriptionManagerTest extends TestHarness {
             public void message(PubNub pubnub, PNMessageResult message) {
                 List<LoggedRequest> requests = findAll(getRequestedFor(urlMatching("/v2/subscribe.*")));
                 assertTrue(requests.size() >= 1);
-                assertEquals(10, message.getMessage().getAsInt());
+                assertEquals(10, message.getMessage().asInt());
                 atomic.addAndGet(1);
             }
 
@@ -693,7 +693,7 @@ public class SubscriptionManagerTest extends TestHarness {
             public void message(PubNub pubnub, PNMessageResult message) {
                 List<LoggedRequest> requests = findAll(getRequestedFor(urlMatching("/v2/subscribe.*")));
                 assertTrue(requests.size() > 0);
-                assertEquals("hey", message.getMessage().getAsJsonObject().get("pn_other").getAsJsonObject().get("text").getAsString());
+                assertEquals("hey", message.getMessage().get("pn_other").get("text").asText());
                 atomic.addAndGet(1);
             }
 
@@ -938,7 +938,7 @@ public class SubscriptionManagerTest extends TestHarness {
             @Override
             public void presence(PubNub pubnub, PNPresenceEventResult presence) {
                 if (presence.getEvent().equals("state-change")) {
-                    if (presence.getState().getAsJsonObject().has("state") && presence.getState().getAsJsonObject().get("state").getAsString().equals("cool")) {
+                    if (presence.getState().has("state") && presence.getState().get("state").asText().equals("cool")) {
                         atomic.set(true);
                     }
                 }

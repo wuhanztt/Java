@@ -1,6 +1,6 @@
 package com.pubnub.api.models.server;
 
-import com.google.gson.JsonElement;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class HistoryForChannelsItem {
 
-    @Getter private JsonElement message;
+    @Getter private JsonNode message;
 
     @Getter private Long timetoken;
 

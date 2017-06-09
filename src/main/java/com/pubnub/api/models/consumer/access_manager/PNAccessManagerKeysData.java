@@ -1,6 +1,6 @@
 package com.pubnub.api.models.consumer.access_manager;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 @ToString
 public class PNAccessManagerKeysData {
 
-    @SerializedName("auths")
+    @JsonProperty("auths")
     private Map<String, PNAccessManagerKeyData> authKeys;
 
 }

@@ -1,6 +1,6 @@
 package com.pubnub.api.models.consumer.pubsub;
 
-import com.google.gson.JsonElement;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -10,7 +10,7 @@ import lombok.ToString;
 @ToString
 public class PNMessageResult {
 
-    private JsonElement message;
+    private JsonNode message;
 
     @Deprecated
     private String subscribedChannel;
@@ -21,7 +21,7 @@ public class PNMessageResult {
     private String subscription;
 
     private Long timetoken;
-    private JsonElement userMetadata;
+    private JsonNode userMetadata;
 
     private String publisher;
 }

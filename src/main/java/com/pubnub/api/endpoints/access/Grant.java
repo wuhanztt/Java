@@ -1,6 +1,6 @@
 package com.pubnub.api.endpoints.access;
 
-import com.google.gson.JsonElement;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.PubNubException;
 import com.pubnub.api.PubNubUtil;
@@ -127,8 +127,8 @@ public class Grant extends Endpoint<Envelope<AccessManagerGrantPayload>, PNAcces
             if (channelGroups.size() == 1) {
                 constructedGroups.put(mapperManager.elementToString(data.getChannelGroups()), data.getAuthKeys());
             } else if (channelGroups.size() > 1) {
-                for (Iterator<Map.Entry<String, JsonElement>> it = mapperManager.getObjectIterator(data.getChannelGroups()); it.hasNext();) {
-                    Map.Entry<String, JsonElement> channelGroup = it.next();
+                for (Iterator<Map.Entry<String, JsonNode>> it = mapperManager.getObjectIterator(data.getChannelGroups()); it.hasNext();) {
+                    Map.Entry<String, JsonNode> channelGroup = it.next();
                     constructedGroups.put(channelGroup.getKey(), createKeyMap(channelGroup.getValue()));
                 }
             }
@@ -159,12 +159,12 @@ public class Grant extends Endpoint<Envelope<AccessManagerGrantPayload>, PNAcces
         return false;
     }
 
-    private Map<String, PNAccessManagerKeyData> createKeyMap(JsonElement input) {
+    private Map<String, PNAccessManagerKeyData> createKeyMap(JsonNode input) {
         Map<String, PNAccessManagerKeyData> result = new HashMap<>();
         MapperManager mapper = getPubnub().getMapper();
 
-        for (Iterator<Map.Entry<String, JsonElement>> it = mapper.getObjectIterator(input, "auths"); it.hasNext();) {
-            Map.Entry<String, JsonElement> keyMap = it.next();
+        for (Iterator<Map.Entry<String, JsonNode>> it = mapper.getObjectIterator(input, "auths"); it.hasNext();) {
+            Map.Entry<String, JsonNode> keyMap = it.next();
             PNAccessManagerKeyData pnAccessManagerKeyData = new PNAccessManagerKeyData()
                     .setManageEnabled(mapper.getAsBoolean(keyMap.getValue(), "m"))
                     .setWriteEnabled(mapper.getAsBoolean(keyMap.getValue(), "w"))

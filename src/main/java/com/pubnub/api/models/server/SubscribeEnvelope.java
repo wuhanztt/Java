@@ -1,6 +1,6 @@
 package com.pubnub.api.models.server;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 import java.util.List;
@@ -8,10 +8,10 @@ import java.util.List;
 @Getter
 public class SubscribeEnvelope {
 
-    @SerializedName("m")
+    @JsonProperty("m")
     private List<SubscribeMessage> messages;
 
-    @SerializedName("t")
+    @JsonProperty("t")
     private SubscribeMetadata metadata;
 
 }

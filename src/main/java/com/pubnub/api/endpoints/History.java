@@ -1,7 +1,7 @@
 package com.pubnub.api.endpoints;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.PubNubException;
 import com.pubnub.api.builder.PubNubErrorBuilder;
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @Accessors(chain = true, fluent = true)
-public class History extends Endpoint<JsonElement, PNHistoryResult> {
+public class History extends Endpoint<JsonNode, PNHistoryResult> {
     private static final int MAX_COUNT = 100;
     @Setter
     private String channel;
@@ -57,7 +57,7 @@ public class History extends Endpoint<JsonElement, PNHistoryResult> {
 
     private interface HistoryService {
         @GET("v2/history/sub-key/{subKey}/channel/{channel}")
-        Call<JsonElement> fetchHistory(@Path("subKey") String subKey,
+        Call<JsonNode> fetchHistory(@Path("subKey") String subKey,
                                     @Path("channel") String channel,
                                     @QueryMap Map<String, String> options);
     }
@@ -70,7 +70,7 @@ public class History extends Endpoint<JsonElement, PNHistoryResult> {
     }
 
     @Override
-    protected Call<JsonElement> doWork(Map<String, String> params) {
+    protected Call<JsonNode> doWork(Map<String, String> params) {
 
         HistoryService service = this.getRetrofit().create(HistoryService.class);
 
@@ -99,7 +99,7 @@ public class History extends Endpoint<JsonElement, PNHistoryResult> {
     }
 
     @Override
-    protected PNHistoryResult createResponse(Response<JsonElement> input) throws PubNubException {
+    protected PNHistoryResult createResponse(Response<JsonNode> input) throws PubNubException {
         PNHistoryResult.PNHistoryResultBuilder historyData = PNHistoryResult.builder();
         List<PNHistoryItemResult> messages = new ArrayList<>();
         MapperManager mapper = getPubnub().getMapper();
@@ -108,10 +108,10 @@ public class History extends Endpoint<JsonElement, PNHistoryResult> {
             historyData.startTimetoken(mapper.elementToLong(mapper.getArrayElement(input.body(), 1)));
             historyData.endTimetoken(mapper.elementToLong(mapper.getArrayElement(input.body(), 2)));
 
-            for (Iterator<JsonElement> it = mapper.getArrayIterator(mapper.getArrayElement(input.body(), 0)); it.hasNext();) {
-                JsonElement historyEntry = it.next();
+            for (Iterator<JsonNode> it = mapper.getArrayIterator(mapper.getArrayElement(input.body(), 0)); it.hasNext();) {
+                JsonNode historyEntry = it.next();
                 PNHistoryItemResult.PNHistoryItemResultBuilder historyItem = PNHistoryItemResult.builder();
-                JsonElement message;
+                JsonNode message;
 
                 if (includeTimetoken != null && includeTimetoken) {
                     historyItem.timetoken(mapper.elementToLong(historyEntry, "timetoken"));
@@ -140,7 +140,7 @@ public class History extends Endpoint<JsonElement, PNHistoryResult> {
         return true;
     }
 
-    private JsonElement processMessage(JsonElement message) throws PubNubException {
+    private JsonNode processMessage(JsonNode message) throws PubNubException {
         // if we do not have a crypto key, there is no way to process the node; let's return.
         if (this.getPubnub().getConfiguration().getCipherKey() == null) {
             return message;
@@ -150,7 +150,7 @@ public class History extends Endpoint<JsonElement, PNHistoryResult> {
         MapperManager mapper = getPubnub().getMapper();
         String inputText;
         String outputText;
-        JsonElement outputObject;
+        JsonNode outputObject;
 
         if (mapper.isJsonObject(message) && mapper.hasField(message, "pn_other")) {
             inputText = mapper.elementToString(message, "pn_other");
@@ -159,11 +159,11 @@ public class History extends Endpoint<JsonElement, PNHistoryResult> {
         }
 
         outputText = crypto.decrypt(inputText);
-        outputObject = this.getPubnub().getMapper().fromJson(outputText, JsonElement.class);
+        outputObject = this.getPubnub().getMapper().fromJson(outputText, JsonNode.class);
 
         // inject the decoded response into the payload
         if (mapper.isJsonObject(message) && mapper.hasField(message, "pn_other")) {
-            JsonObject objectNode = mapper.getAsObject(message);
+            ObjectNode objectNode = mapper.getAsObject(message);
             mapper.putOnObject(objectNode, "pn_other", outputObject);
             outputObject = objectNode;
         }

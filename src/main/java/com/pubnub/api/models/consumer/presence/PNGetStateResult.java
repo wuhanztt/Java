@@ -1,6 +1,6 @@
 package com.pubnub.api.models.consumer.presence;
 
-import com.google.gson.JsonElement;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -12,6 +12,6 @@ import java.util.Map;
 @ToString
 public class PNGetStateResult {
 
-    private Map<String, JsonElement> stateByUUID;
+    private Map<String, JsonNode> stateByUUID;
 
 }

@@ -1,7 +1,7 @@
 package com.pubnub.api.endpoints.presence;
 
 
-import com.google.gson.JsonElement;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.PubNubException;
 import com.pubnub.api.PubNubUtil;
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @Accessors(chain = true, fluent = true)
-public class HereNow extends Endpoint<Envelope<JsonElement>, PNHereNowResult> {
+public class HereNow extends Endpoint<Envelope<JsonNode>, PNHereNowResult> {
     @Setter
     private List<String> channels;
     @Setter
@@ -61,7 +61,7 @@ public class HereNow extends Endpoint<Envelope<JsonElement>, PNHereNowResult> {
     }
 
     @Override
-    protected Call<Envelope<JsonElement>> doWork(Map<String, String> params) {
+    protected Call<Envelope<JsonNode>> doWork(Map<String, String> params) {
 
         if (includeState == null) {
             includeState = false;
@@ -99,7 +99,7 @@ public class HereNow extends Endpoint<Envelope<JsonElement>, PNHereNowResult> {
     }
 
     @Override
-    protected PNHereNowResult createResponse(Response<Envelope<JsonElement>> input) {
+    protected PNHereNowResult createResponse(Response<Envelope<JsonNode>> input) {
         PNHereNowResult herenowData;
 
         if (channels.size() > 1 || channelGroups.size() > 0) {
@@ -111,7 +111,7 @@ public class HereNow extends Endpoint<Envelope<JsonElement>, PNHereNowResult> {
         return herenowData;
     }
 
-    private PNHereNowResult parseSingleChannelResponse(Envelope<JsonElement> input) {
+    private PNHereNowResult parseSingleChannelResponse(Envelope<JsonNode> input) {
         PNHereNowResult hereNowData = PNHereNowResult.builder()
                 .totalChannels(1)
                 .channels(new HashMap<String, PNHereNowChannelData>())
@@ -130,7 +130,7 @@ public class HereNow extends Endpoint<Envelope<JsonElement>, PNHereNowResult> {
         return hereNowData;
     }
 
-    private PNHereNowResult parseMultipleChannelResponse(JsonElement input) {
+    private PNHereNowResult parseMultipleChannelResponse(JsonNode input) {
         MapperManager mapper = getPubnub().getMapper();
         PNHereNowResult hereNowData = PNHereNowResult.builder()
                 .channels(new HashMap<String, PNHereNowChannelData>())
@@ -138,8 +138,8 @@ public class HereNow extends Endpoint<Envelope<JsonElement>, PNHereNowResult> {
                 .totalOccupancy(mapper.elementToInt(input, "total_occupancy"))
                 .build();
 
-        for (Iterator<Map.Entry<String, JsonElement>> it = mapper.getObjectIterator(input, "channels"); it.hasNext();) {
-            Map.Entry<String, JsonElement> entry = it.next();
+        for (Iterator<Map.Entry<String, JsonNode>> it = mapper.getObjectIterator(input, "channels"); it.hasNext();) {
+            Map.Entry<String, JsonNode> entry = it.next();
 
             PNHereNowChannelData.PNHereNowChannelDataBuilder hereNowChannelData = PNHereNowChannelData.builder()
                     .channelName(entry.getKey())
@@ -157,13 +157,13 @@ public class HereNow extends Endpoint<Envelope<JsonElement>, PNHereNowResult> {
         return hereNowData;
     }
 
-    private List<PNHereNowOccupantData> prepareOccupantData(JsonElement input) {
+    private List<PNHereNowOccupantData> prepareOccupantData(JsonNode input) {
         List<PNHereNowOccupantData> occupantsResults = new ArrayList<>();
         MapperManager mapper = getPubnub().getMapper();
 
         if (includeState != null && includeState) {
-            for (Iterator<JsonElement> it = mapper.getArrayIterator(input); it.hasNext();) {
-                JsonElement occupant = it.next();
+            for (Iterator<JsonNode> it = mapper.getArrayIterator(input); it.hasNext();) {
+                JsonNode occupant = it.next();
                 PNHereNowOccupantData.PNHereNowOccupantDataBuilder hereNowOccupantData = PNHereNowOccupantData.builder();
                 hereNowOccupantData.uuid(mapper.elementToString(occupant, "uuid"));
                 hereNowOccupantData.state(mapper.getField(occupant, "state"));
@@ -171,8 +171,8 @@ public class HereNow extends Endpoint<Envelope<JsonElement>, PNHereNowResult> {
                 occupantsResults.add(hereNowOccupantData.build());
             }
         } else {
-            for (Iterator<JsonElement> it = mapper.getArrayIterator(input); it.hasNext();) {
-                JsonElement occupant = it.next();
+            for (Iterator<JsonNode> it = mapper.getArrayIterator(input); it.hasNext();) {
+                JsonNode occupant = it.next();
                 PNHereNowOccupantData.PNHereNowOccupantDataBuilder hereNowOccupantData = PNHereNowOccupantData.builder();
                 hereNowOccupantData.uuid(mapper.elementToString(occupant));
                 hereNowOccupantData.state(null);

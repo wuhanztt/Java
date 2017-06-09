@@ -1,6 +1,6 @@
 package com.pubnub.api.models.consumer.history;
 
-import com.google.gson.JsonElement;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -11,6 +11,6 @@ import lombok.ToString;
 public class PNHistoryItemResult {
 
     @Getter private Long timetoken;
-    @Getter private JsonElement entry;
+    @Getter private JsonNode entry;
 
 }

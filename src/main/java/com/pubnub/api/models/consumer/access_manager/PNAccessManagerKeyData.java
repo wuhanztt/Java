@@ -1,6 +1,6 @@
 package com.pubnub.api.models.consumer.access_manager;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -12,13 +12,13 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class PNAccessManagerKeyData {
 
-    @SerializedName("r")
+    @JsonProperty("r")
     private boolean readEnabled;
 
-    @SerializedName("w")
+    @JsonProperty("w")
     private boolean writeEnabled;
 
-    @SerializedName("m")
+    @JsonProperty("m")
     private boolean manageEnabled;
 
 }

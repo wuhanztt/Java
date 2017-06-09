@@ -1,7 +1,7 @@
 package com.pubnub.api.endpoints;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.PubNubException;
 import com.pubnub.api.PubNubUtil;
@@ -109,7 +109,7 @@ public class FetchMessages extends Endpoint<FetchMessagesEnvelope, PNFetchMessag
             for (HistoryForChannelsItem item: entry.getValue()) {
                 PNMessageResult.PNMessageResultBuilder pnMessageResultBuilder = PNMessageResult.builder();
                 pnMessageResultBuilder.channel(entry.getKey());
-                JsonElement message = processMessage(item.getMessage());
+                JsonNode message = processMessage(item.getMessage());
                 pnMessageResultBuilder.message(message);
                 pnMessageResultBuilder.timetoken(item.getTimetoken());
                 messages.add(pnMessageResultBuilder.build());
@@ -133,7 +133,7 @@ public class FetchMessages extends Endpoint<FetchMessagesEnvelope, PNFetchMessag
         return true;
     }
 
-    private JsonElement processMessage(JsonElement message) throws PubNubException {
+    private JsonNode processMessage(JsonNode message) throws PubNubException {
         // if we do not have a crypto key, there is no way to process the node; let's return.
         if (this.getPubnub().getConfiguration().getCipherKey() == null) {
             return message;
@@ -143,7 +143,7 @@ public class FetchMessages extends Endpoint<FetchMessagesEnvelope, PNFetchMessag
         MapperManager mapper = this.getPubnub().getMapper();
         String inputText;
         String outputText;
-        JsonElement outputObject;
+        JsonNode outputObject;
 
         if (mapper.isJsonObject(message) && mapper.hasField(message, "pn_other")) {
             inputText = mapper.elementToString(message, "pn_other");
@@ -152,11 +152,11 @@ public class FetchMessages extends Endpoint<FetchMessagesEnvelope, PNFetchMessag
         }
 
         outputText = crypto.decrypt(inputText);
-        outputObject = mapper.fromJson(outputText, JsonElement.class);
+        outputObject = mapper.fromJson(outputText, JsonNode.class);
 
         // inject the decoded resposne into the payload
         if (mapper.isJsonObject(message) && mapper.hasField(message, "pn_other")) {
-            JsonObject objectNode = mapper.getAsObject(message);
+            ObjectNode objectNode = mapper.getAsObject(message);
             mapper.putOnObject(objectNode, "pn_other", outputObject);
             outputObject = objectNode;
         }

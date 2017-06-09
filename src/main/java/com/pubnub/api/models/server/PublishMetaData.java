@@ -1,15 +1,15 @@
 package com.pubnub.api.models.server;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
 public class PublishMetaData {
 
-    @SerializedName("t")
+    @JsonProperty("t")
     private Long publishTimetoken;
 
-    @SerializedName("r")
+    @JsonProperty("r")
     private Integer region;
 
 }

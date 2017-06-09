@@ -1,7 +1,7 @@
 package com.pubnub.api.endpoints;
 
 
-import com.google.gson.JsonElement;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.PubNubException;
 import com.pubnub.api.builder.PubNubErrorBuilder;
@@ -79,7 +79,7 @@ public abstract class Endpoint<Input, Output> {
 
         if (!serverResponse.isSuccessful() || serverResponse.code() != SERVER_RESPONSE_SUCCESS) {
             String responseBodyText;
-            JsonElement responseBody;
+            JsonNode responseBody;
 
             try {
                 responseBodyText = serverResponse.errorBody().string();
@@ -88,7 +88,7 @@ public abstract class Endpoint<Input, Output> {
             }
 
             try {
-                responseBody = mapper.fromJson(responseBodyText, JsonElement.class);
+                responseBody = mapper.fromJson(responseBodyText, JsonNode.class);
             } catch (PubNubException e) {
                 responseBody = null;
             }
@@ -127,8 +127,8 @@ public abstract class Endpoint<Input, Output> {
                 if (!response.isSuccessful() || response.code() != SERVER_RESPONSE_SUCCESS) {
 
                     String responseBodyText;
-                    JsonElement responseBody;
-                    JsonElement responseBodyPayload = null;
+                    JsonNode responseBody;
+                    JsonNode responseBodyPayload = null;
                     ArrayList<String> affectedChannels = new ArrayList<>();
                     ArrayList<String> affectedChannelGroups = new ArrayList<>();
 
@@ -139,7 +139,7 @@ public abstract class Endpoint<Input, Output> {
                     }
 
                     try {
-                        responseBody = mapper.fromJson(responseBodyText, JsonElement.class);
+                        responseBody = mapper.fromJson(responseBodyText, JsonNode.class);
                     } catch (PubNubException e) {
                         responseBody = null;
                     }
@@ -160,15 +160,15 @@ public abstract class Endpoint<Input, Output> {
                         pnStatusCategory = PNStatusCategory.PNAccessDeniedCategory;
 
                         if (responseBodyPayload != null && mapper.hasField(responseBodyPayload, "channels")) {
-                            for (Iterator<JsonElement> it = mapper.getArrayIterator(responseBodyPayload, "channels"); it.hasNext();) {
-                                JsonElement objNode = it.next();
+                            for (Iterator<JsonNode> it = mapper.getArrayIterator(responseBodyPayload, "channels"); it.hasNext();) {
+                                JsonNode objNode = it.next();
                                 affectedChannels.add(mapper.elementToString(objNode));
                             }
                         }
 
                         if (responseBodyPayload != null && mapper.hasField(responseBodyPayload, "channel-groups")) {
-                            for (Iterator<JsonElement> it = mapper.getArrayIterator(responseBodyPayload, "channel-groups"); it.hasNext();) {
-                                JsonElement objNode = it.next();
+                            for (Iterator<JsonNode> it = mapper.getArrayIterator(responseBodyPayload, "channel-groups"); it.hasNext();) {
+                                JsonNode objNode = it.next();
                                 String channelGroupName = mapper.elementToString(objNode).substring(0, 1).equals(":") ? mapper.elementToString(objNode).substring(1) : mapper.elementToString(objNode);
                                 affectedChannelGroups.add(channelGroupName);
                             }

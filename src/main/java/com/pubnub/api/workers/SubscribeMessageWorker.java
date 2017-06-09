@@ -1,8 +1,8 @@
 package com.pubnub.api.workers;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.PubNubException;
 import com.pubnub.api.PubNubUtil;
@@ -59,7 +59,7 @@ public class SubscribeMessageWorker implements Runnable {
         }
     }
 
-    private JsonElement processMessage(JsonElement input) {
+    private JsonNode processMessage(JsonNode input) {
         // if we do not have a crypto key, there is no way to process the node; let's return.
         if (pubnub.getConfiguration().getCipherKey() == null) {
             return input;
@@ -69,7 +69,7 @@ public class SubscribeMessageWorker implements Runnable {
         MapperManager mapper = this.pubnub.getMapper();
         String inputText;
         String outputText;
-        JsonElement outputObject;
+        JsonNode outputObject;
 
         if (mapper.isJsonObject(input) && mapper.hasField(input, "pn_other")) {
             inputText = mapper.elementToString(input, "pn_other");
@@ -91,7 +91,7 @@ public class SubscribeMessageWorker implements Runnable {
         }
 
         try {
-            outputObject = mapper.fromJson(outputText, JsonElement.class);
+            outputObject = mapper.fromJson(outputText, JsonNode.class);
         } catch (PubNubException e) {
             PNStatus pnStatus = PNStatus.builder().error(true)
                     .errorData(new PNErrorData(e.getMessage(), e))
@@ -105,7 +105,7 @@ public class SubscribeMessageWorker implements Runnable {
 
         // inject the decoded response into the payload
         if (mapper.isJsonObject(input) && mapper.hasField(input, "pn_other")) {
-            JsonObject objectNode = mapper.getAsObject(input);
+            ObjectNode objectNode = mapper.getAsObject(input);
             mapper.putOnObject(objectNode, "pn_other", outputObject);
             outputObject = objectNode;
         }
@@ -137,7 +137,7 @@ public class SubscribeMessageWorker implements Runnable {
                 strippedPresenceSubscription = PubNubUtil.replaceLast(subscriptionMatch, "-pnpres", "");
             }
 
-            JsonElement isHereNowRefresh = message.getPayload().getAsJsonObject().get("here_now_refresh");
+            JsonNode isHereNowRefresh = message.getPayload().get("here_now_refresh");
 
             PNPresenceEventResult pnPresenceEventResult = PNPresenceEventResult.builder()
                     .event(presencePayload.getAction())
@@ -152,15 +152,15 @@ public class SubscribeMessageWorker implements Runnable {
                     .occupancy(presencePayload.getOccupancy())
                     .uuid(presencePayload.getUuid())
                     .timestamp(presencePayload.getTimestamp())
-                    .join(getDelta(message.getPayload().getAsJsonObject().get("join")))
-                    .leave(getDelta(message.getPayload().getAsJsonObject().get("leave")))
-                    .timeout(getDelta(message.getPayload().getAsJsonObject().get("timeout")))
-                    .hereNowRefresh(isHereNowRefresh != null && isHereNowRefresh.getAsBoolean())
+                    .join(getDelta(message.getPayload().get("join")))
+                    .leave(getDelta(message.getPayload().get("leave")))
+                    .timeout(getDelta(message.getPayload().get("timeout")))
+                    .hereNowRefresh(isHereNowRefresh != null && isHereNowRefresh.asBoolean())
                     .build();
 
             listenerManager.announce(pnPresenceEventResult);
         } else {
-            JsonElement extractedMessage = processMessage(message.getPayload());
+            JsonNode extractedMessage = processMessage(message.getPayload());
 
             if (extractedMessage == null) {
                 log.debug("unable to parse payload on #processIncomingMessages");
@@ -184,12 +184,12 @@ public class SubscribeMessageWorker implements Runnable {
         }
     }
 
-    private List<String> getDelta(JsonElement delta) {
+    private List<String> getDelta(JsonNode delta) {
         List<String> list = new ArrayList<>();
         if (delta != null) {
-            JsonArray jsonArray = delta.getAsJsonArray();
+            ArrayNode jsonArray = (ArrayNode) delta;
             for (int i = 0; i < jsonArray.size(); i++) {
-                list.add(jsonArray.get(i).getAsString());
+                list.add(jsonArray.get(i).asText());
             }
         }
 

@@ -1,6 +1,6 @@
 package com.pubnub.api;
 
-import com.google.gson.JsonElement;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import retrofit2.Call;
 public class PubNubException extends Exception {
     private String errormsg = "";
     private PubNubError pubnubError;
-    private JsonElement jso;
+    private JsonNode jso;
     private String response;
     private int statusCode;
 

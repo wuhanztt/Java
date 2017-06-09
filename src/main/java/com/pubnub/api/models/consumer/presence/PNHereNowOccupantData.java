@@ -1,6 +1,6 @@
 package com.pubnub.api.models.consumer.presence;
 
-import com.google.gson.JsonElement;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -10,5 +10,5 @@ import lombok.ToString;
 @ToString
 public class PNHereNowOccupantData {
     private String uuid;
-    private JsonElement state;
+    private JsonNode state;
 }

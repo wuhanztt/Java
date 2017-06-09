@@ -1,51 +1,51 @@
 package com.pubnub.api.models.server;
 
-import com.google.gson.JsonElement;
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
 
 @Getter
 public class SubscribeMessage {
 
-    @SerializedName("a")
+    @JsonProperty("a")
     private String shard;
 
-    @SerializedName("b")
+    @JsonProperty("b")
     private String subscriptionMatch;
 
-    @SerializedName("c")
+    @JsonProperty("c")
     private String channel;
 
-    @SerializedName("d")
-    private JsonElement payload;
+    @JsonProperty("d")
+    private JsonNode payload;
 
     // TODO: figure me out
     //@SerializedName("ear")
     //private String payload;
 
-    @SerializedName("f")
+    @JsonProperty("f")
     private String flags;
 
-    @SerializedName("i")
+    @JsonProperty("i")
     private String issuingClientId;
 
-    @SerializedName("k")
+    @JsonProperty("k")
     private String subscribeKey;
 
     //@SerializedName("s")
     //private String sequenceNumber;
 
-    @SerializedName("o")
+    @JsonProperty("o")
     private OriginationMetaData originationMetadata;
 
-    @SerializedName("p")
+    @JsonProperty("p")
     private PublishMetaData publishMetaData;
 
     //@SerializedName("r")
     //private Object replicationMap;
 
-    @SerializedName("u")
-    private JsonElement userMetadata;
+    @JsonProperty("u")
+    private JsonNode userMetadata;
 
     //@SerializedName("w")
     //private String waypointList;

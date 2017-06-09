@@ -80,12 +80,12 @@ public class HistoryEndpointTest extends TestHarness {
         assertEquals(response.getMessages().size(), 2);
 
         assertTrue(response.getMessages().get(0).getTimetoken().equals(1111L));
-        assertEquals((response.getMessages().get(0).getEntry()).getAsJsonObject().get("a").getAsInt(), 11);
-        assertEquals((response.getMessages().get(0).getEntry()).getAsJsonObject().get("b").getAsInt(), 22);
+        assertEquals((response.getMessages().get(0).getEntry()).get("a").asInt(), 11);
+        assertEquals((response.getMessages().get(0).getEntry()).get("b").asInt(), 22);
 
         assertTrue(response.getMessages().get(1).getTimetoken().equals(2222L));
-        assertEquals((response.getMessages().get(1).getEntry()).getAsJsonObject().get("a").getAsInt(), 33);
-        assertEquals((response.getMessages().get(1).getEntry()).getAsJsonObject().get("b").getAsInt(), 44);
+        assertEquals((response.getMessages().get(1).getEntry()).get("a").asInt(), 33);
+        assertEquals((response.getMessages().get(1).getEntry()).get("b").asInt(), 44);
     }
 
     @Test
@@ -143,17 +143,17 @@ public class HistoryEndpointTest extends TestHarness {
         assertEquals(response.getMessages().size(), 3);
 
         assertEquals(response.getMessages().get(0).getTimetoken(), null);
-        assertEquals("m1", (response.getMessages().get(0).getEntry()).getAsJsonArray().get(0).getAsString());
-        assertEquals("m2", (response.getMessages().get(0).getEntry()).getAsJsonArray().get(1).getAsString());
-        assertEquals("m3", (response.getMessages().get(0).getEntry()).getAsJsonArray().get(2).getAsString());
+        assertEquals("m1", (response.getMessages().get(0).getEntry()).get(0).asText());
+        assertEquals("m2", (response.getMessages().get(0).getEntry()).get(1).asText());
+        assertEquals("m3", (response.getMessages().get(0).getEntry()).get(2).asText());
 
-        assertEquals("m1", (response.getMessages().get(1).getEntry()).getAsJsonArray().get(0).getAsString());
-        assertEquals("m2", (response.getMessages().get(1).getEntry()).getAsJsonArray().get(1).getAsString());
-        assertEquals("m3", (response.getMessages().get(1).getEntry()).getAsJsonArray().get(2).getAsString());
+        assertEquals("m1", (response.getMessages().get(1).getEntry()).get(0).asText());
+        assertEquals("m2", (response.getMessages().get(1).getEntry()).get(1).asText());
+        assertEquals("m3", (response.getMessages().get(1).getEntry()).get(2).asText());
 
-        assertEquals("m1", (response.getMessages().get(2).getEntry()).getAsJsonArray().get(0).getAsString());
-        assertEquals("m2", (response.getMessages().get(2).getEntry()).getAsJsonArray().get(1).getAsString());
-        assertEquals("m3", (response.getMessages().get(2).getEntry()).getAsJsonArray().get(2).getAsString());
+        assertEquals("m1", (response.getMessages().get(2).getEntry()).get(0).asText());
+        assertEquals("m2", (response.getMessages().get(2).getEntry()).get(1).asText());
+        assertEquals("m3", (response.getMessages().get(2).getEntry()).get(2).asText());
 
     }
 
@@ -172,7 +172,7 @@ public class HistoryEndpointTest extends TestHarness {
         assertEquals(response.getMessages().size(), 1);
 
         assertEquals(response.getMessages().get(0).getTimetoken(), null);
-        assertEquals("hey", response.getMessages().get(0).getEntry().getAsJsonObject().get("pn_other").getAsJsonObject().get("text").getAsString());
+        assertEquals("hey", response.getMessages().get(0).getEntry().get("pn_other").get("text").asText());
 
     }
 
@@ -207,12 +207,12 @@ public class HistoryEndpointTest extends TestHarness {
         assertEquals(response.getMessages().size(), 2);
 
         assertNull(response.getMessages().get(0).getTimetoken());
-        assertEquals(response.getMessages().get(0).getEntry().getAsJsonObject().get("a").getAsInt(), 11);
-        assertEquals(response.getMessages().get(0).getEntry().getAsJsonObject().get("b").getAsInt(), 22);
+        assertEquals(response.getMessages().get(0).getEntry().get("a").asInt(), 11);
+        assertEquals(response.getMessages().get(0).getEntry().get("b").asInt(), 22);
 
         assertNull(response.getMessages().get(1).getTimetoken());
-        assertEquals(response.getMessages().get(1).getEntry().getAsJsonObject().get("a").getAsInt(), 33);
-        assertEquals(response.getMessages().get(1).getEntry().getAsJsonObject().get("b").getAsInt(), 44);
+        assertEquals(response.getMessages().get(1).getEntry().get("a").asInt(), 33);
+        assertEquals(response.getMessages().get(1).getEntry().get("b").asInt(), 44);
     }
 
 
@@ -369,46 +369,11 @@ public class HistoryEndpointTest extends TestHarness {
         assertEquals(response.getMessages().size(), 2);
 
         assertTrue(response.getMessages().get(0).getTimetoken().equals(1111L));
-        assertEquals((response.getMessages().get(0).getEntry()).getAsJsonObject().get("a").getAsInt(), 11);
-        assertEquals((response.getMessages().get(0).getEntry()).getAsJsonObject().get("b").getAsInt(), 22);
+        assertEquals((response.getMessages().get(0).getEntry()).get("a").asInt(), 11);
+        assertEquals((response.getMessages().get(0).getEntry()).get("b").asInt(), 22);
 
         assertTrue(response.getMessages().get(1).getTimetoken().equals(2222L));
-        assertEquals((response.getMessages().get(1).getEntry()).getAsJsonObject().get("a").getAsInt(), 33);
-        assertEquals((response.getMessages().get(1).getEntry()).getAsJsonObject().get("b").getAsInt(), 44);
+        assertEquals((response.getMessages().get(1).getEntry()).get("a").asInt(), 33);
+        assertEquals((response.getMessages().get(1).getEntry()).get("b").asInt(), 44);
     }
-
-    @Test(expected=UnsupportedOperationException.class)
-    public void testSyncProcessMessageError() throws IOException, PubNubException {
-        List<Object> testArray = new ArrayList<>();
-        List<Object> historyItems = new ArrayList<>();
-
-        Map<String, Object> historyEnvelope1 = new HashMap<>();
-        Map<String, Object> historyItem1 = new HashMap<>();
-        historyItem1.put("a", 11);
-        historyItem1.put("b", 22);
-        historyEnvelope1.put("timetoken", 1111);
-        historyEnvelope1.put("message", historyItem1);
-
-        Map<String, Object> historyEnvelope2 = new HashMap<>();
-        Map<String, Object> historyItem2 = new HashMap<>();
-        historyItem2.put("a", 33);
-        historyItem2.put("b", 44);
-        historyEnvelope2.put("timetoken", 2222);
-        historyEnvelope2.put("message", historyItem2);
-
-        historyItems.add(historyEnvelope1);
-        historyItems.add(historyEnvelope2);
-
-        testArray.add(historyItems);
-        testArray.add(1234);
-        testArray.add(4321);
-
-        stubFor(get(urlPathEqualTo("/v2/history/sub-key/mySubscribeKey/channel/niceChannel"))
-                .willReturn(aResponse().withBody(pubnub.getMapper().toJson(testArray))));
-
-        pubnub.getConfiguration().setCipherKey("Test");
-        partialHistory.channel("niceChannel").count(5).reverse(true).start(1L).end(2L).includeTimetoken(true).sync();
-    }
-
-
 }
