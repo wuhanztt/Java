@@ -8,7 +8,15 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import okhttp3.Authenticator;
+import okhttp3.ConnectionSpec;
+import okhttp3.logging.HttpLoggingInterceptor;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509ExtendedTrustManager;
+import java.net.Proxy;
+import java.net.ProxySelector;
 import java.util.UUID;
 
 @Getter
@@ -89,6 +97,31 @@ public class PNConfiguration {
      */
     @Setter
     private String filterExpression;
+
+
+    /**
+     * Proxy configuration which will be passed to the networking layer.
+     */
+
+    @Getter
+    private SSLSocketFactory sslSocketFactory;
+    @Getter
+    private X509ExtendedTrustManager x509ExtendedTrustManager;
+    @Getter
+    private ConnectionSpec connectionSpec;
+
+    @Getter
+    private HostnameVerifier hostnameVerifier;
+
+    @Setter
+    private Proxy proxy;
+    @Setter
+    private ProxySelector proxySelector;
+    @Setter
+    private Authenticator proxyAuthenticator;
+
+    @Setter
+    private HttpLoggingInterceptor httpLoggingInterceptor;
 
 
     /**

@@ -6,8 +6,6 @@ plugins {
     id 'java'
     id 'jacoco'
     id 'maven'
-    id 'checkstyle'
-    id 'findbugs'
 }
 group = 'com.pubnub'
 version = '4.0.9'
@@ -51,31 +49,6 @@ jacocoTestReport {
     reports {
         xml.enabled = true
         html.enabled = true
-    }
-}
-
-checkstyle {
-    configFile = new File(rootDir, "src/test/checkstyle.xml")
-    toolVersion = '6.17'
-}
-
-tasks.withType(Checkstyle) {
-
-    exclude '**/vendor/**', "**/*Test*"
-
-    reports {
-        xml.enabled =  true
-        html.enabled = true
-    }
-}
-
-tasks.withType(FindBugs) {
-
-    exclude '**/vendor/**', "**/*Test*"
-
-    reports {
-        xml.enabled false
-        html.enabled true
     }
 }
 

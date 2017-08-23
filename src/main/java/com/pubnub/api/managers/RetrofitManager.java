@@ -9,6 +9,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 public class RetrofitManager {
@@ -44,6 +45,34 @@ public class RetrofitManager {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
             httpClient.addInterceptor(logging);
+        }
+
+        if (pubnub.getConfiguration().getHttpLoggingInterceptor() != null) {
+            httpClient.addInterceptor(pubnub.getConfiguration().getHttpLoggingInterceptor());
+        }
+
+        if (pubnub.getConfiguration().getSslSocketFactory() != null && pubnub.getConfiguration().getX509ExtendedTrustManager() != null) {
+            httpClient.sslSocketFactory(pubnub.getConfiguration().getSslSocketFactory(), pubnub.getConfiguration().getX509ExtendedTrustManager());
+        }
+
+        if (pubnub.getConfiguration().getConnectionSpec() != null) {
+            httpClient.connectionSpecs(Collections.singletonList(pubnub.getConfiguration().getConnectionSpec()));
+        }
+
+        if (pubnub.getConfiguration().getHostnameVerifier() != null) {
+            httpClient.hostnameVerifier(pubnub.getConfiguration().getHostnameVerifier());
+        }
+
+        if (pubnub.getConfiguration().getProxy() != null) {
+            httpClient.proxy(pubnub.getConfiguration().getProxy());
+        }
+
+        if (pubnub.getConfiguration().getProxySelector() != null) {
+            httpClient.proxySelector(pubnub.getConfiguration().getProxySelector());
+        }
+
+        if (pubnub.getConfiguration().getProxyAuthenticator() != null) {
+            httpClient.proxyAuthenticator(pubnub.getConfiguration().getProxyAuthenticator());
         }
 
         return new Retrofit.Builder()
