@@ -74,7 +74,7 @@ public class SubscriptionManager {
 
         this.subscriptionStatusAnnounced = false;
         this.messageQueue = new LinkedBlockingQueue<>();
-        this.subscriptionState = new StateManager();
+        this.subscriptionState = new StateManager(pubnubInstance.getConfiguration());
 
         this.listenerManager = new ListenerManager(this.pubnub);
         this.reconnectionManager = new ReconnectionManager(this.pubnub);
@@ -211,11 +211,12 @@ public class SubscriptionManager {
     }
 
     public synchronized void adaptRegisterHeartbeatBuilder(HeartbeatOperation heartbeatBuilder) {
-        // do work here
+        this.subscriptionState.adaptRegisterHeartbeat(heartbeatBuilder);
         reconnect();
     }
 
     public synchronized void adaptDeRegisterHeartbeatBuilder(HeartbeatOperation heartbeatBuilder) {
+        this.subscriptionState.adaptDeregisterHeartbeat(heartbeatBuilder);
         // do work here
         reconnect();
     }
@@ -331,17 +332,17 @@ public class SubscriptionManager {
             heartbeatCall = null;
         }
 
-        List<String> presenceChannels = this.subscriptionState.prepareChannelList(false);
-        List<String> presenceChannelGroups = this.subscriptionState.prepareChannelGroupList(false);
+        List<String> heartbeatChannels = this.subscriptionState.getHeartbeatChannelList();
+        List<String> heartbeatChannelGroups = this.subscriptionState.getHeartbeatChannelGroupList();
         Map<String, Object> stateStorage = this.subscriptionState.createStatePayload();
 
         // do not start the loop if we do not have any presence channels or channel groups enabled.
-        if (presenceChannels.isEmpty() && presenceChannelGroups.isEmpty()) {
+        if (heartbeatChannels.isEmpty() && heartbeatChannelGroups.isEmpty()) {
             return;
         }
 
         heartbeatCall = new Heartbeat(pubnub, this.telemetryManager, this.retrofitManager)
-                .channels(presenceChannels).channelGroups(presenceChannelGroups).state(stateStorage);
+                .channels(heartbeatChannels).channelGroups(heartbeatChannelGroups).state(stateStorage);
 
         heartbeatCall.async(new PNCallback<Boolean>() {
             @Override
