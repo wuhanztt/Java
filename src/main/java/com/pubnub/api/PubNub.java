@@ -1,7 +1,9 @@
 package com.pubnub.api;
 
 import com.pubnub.api.builder.PubNubErrorBuilder;
+import com.pubnub.api.builder.RegisterHeartbeatBuilder;
 import com.pubnub.api.builder.SubscribeBuilder;
+import com.pubnub.api.builder.DeregisterHeartbeatBuilder;
 import com.pubnub.api.builder.UnsubscribeBuilder;
 import com.pubnub.api.callbacks.SubscribeCallback;
 import com.pubnub.api.endpoints.DeleteMessages;
@@ -178,6 +180,14 @@ public class PubNub {
 
     public DeleteChannelGroup deleteChannelGroup() {
         return new DeleteChannelGroup(this, this.telemetryManager, this.retrofitManager);
+    }
+
+    public RegisterHeartbeatBuilder registerHeartbeat() {
+        return new RegisterHeartbeatBuilder(this.subscriptionManager);
+    }
+
+    public DeregisterHeartbeatBuilder deregisterHeartbeat() {
+        return new DeregisterHeartbeatBuilder(this.subscriptionManager);
     }
 
     // public methods

@@ -1,6 +1,7 @@
 package com.pubnub.api.managers;
 
 import com.pubnub.api.PubNub;
+import com.pubnub.api.builder.dto.HeartbeatOperation;
 import com.pubnub.api.builder.dto.StateOperation;
 import com.pubnub.api.builder.dto.SubscribeOperation;
 import com.pubnub.api.builder.dto.UnsubscribeOperation;
@@ -206,6 +207,16 @@ public class SubscriptionManager {
             timetoken = 0L;
         }
 
+        reconnect();
+    }
+
+    public synchronized void adaptRegisterHeartbeatBuilder(HeartbeatOperation heartbeatBuilder) {
+        // do work here
+        reconnect();
+    }
+
+    public synchronized void adaptDeRegisterHeartbeatBuilder(HeartbeatOperation heartbeatBuilder) {
+        // do work here
         reconnect();
     }
 

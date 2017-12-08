@@ -178,6 +178,9 @@ public class PNConfiguration {
     @Setter
     private Integer maximumMessagesCacheSize;
 
+    @Setter
+    private boolean heartbeatOnAllSubscriptions;
+
     /**
      * Initialize the PNConfiguration with default values
      */
@@ -208,6 +211,8 @@ public class PNConfiguration {
         dedupOnSubscribe = false;
         supressLeaveEvents = false;
         maximumMessagesCacheSize = DEFAULT_DEDUPE_SIZE;
+
+        heartbeatOnAllSubscriptions = true;
     }
 
     /**
