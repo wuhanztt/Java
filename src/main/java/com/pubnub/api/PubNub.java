@@ -3,6 +3,7 @@ package com.pubnub.api;
 import com.pubnub.api.builder.PubNubErrorBuilder;
 import com.pubnub.api.builder.SubscribeBuilder;
 import com.pubnub.api.builder.UnsubscribeBuilder;
+import com.pubnub.api.builder.PresenceBuilder;
 import com.pubnub.api.callbacks.SubscribeCallback;
 import com.pubnub.api.endpoints.DeleteMessages;
 import com.pubnub.api.endpoints.FetchMessages;
@@ -24,18 +25,19 @@ import com.pubnub.api.endpoints.push.AddChannelsToPush;
 import com.pubnub.api.endpoints.push.ListPushProvisions;
 import com.pubnub.api.endpoints.push.RemoveAllPushChannelsForDevice;
 import com.pubnub.api.endpoints.push.RemoveChannelsFromPush;
-import com.pubnub.api.managers.MapperManager;
-import com.pubnub.api.managers.SubscriptionManager;
 import com.pubnub.api.managers.BasePathManager;
+import com.pubnub.api.managers.MapperManager;
 import com.pubnub.api.managers.PublishSequenceManager;
-import com.pubnub.api.managers.TelemetryManager;
 import com.pubnub.api.managers.RetrofitManager;
+import com.pubnub.api.managers.SubscriptionManager;
+import com.pubnub.api.managers.TelemetryManager;
 import com.pubnub.api.vendor.Crypto;
-import lombok.Getter;
 
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
+import lombok.Getter;
 
 
 public class PubNub {
@@ -94,6 +96,10 @@ public class PubNub {
 
     public UnsubscribeBuilder unsubscribe() {
         return new UnsubscribeBuilder(this.subscriptionManager);
+    }
+
+    public PresenceBuilder presence() {
+        return new PresenceBuilder(this.subscriptionManager);
     }
 
     // start push
