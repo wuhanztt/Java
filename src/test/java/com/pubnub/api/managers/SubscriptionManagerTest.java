@@ -1325,6 +1325,74 @@ public class SubscriptionManagerTest extends TestHarness {
     }
 
     @Test
+    public void testAllHeartbeatsViaPresence() {
+
+        final AtomicBoolean statusRecieved = new AtomicBoolean();
+        pubnub.getConfiguration().setHeartbeatNotificationOptions(PNHeartbeatNotificationOptions.ALL);
+
+        stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/ch2,ch1/heartbeat"))
+                .willReturn(aResponse().withBody("{\"status\": 200, \"message\": \"OK\", \"service\": \"Presence\", \"action\": \"leave\"}")));
+
+        SubscribeCallback sub1 = new SubscribeCallback() {
+            @Override
+            public void status(PubNub pubnub, PNStatus status) {
+                if (status.getOperation() == PNOperationType.PNHeartbeatOperation && !status.isError()) {
+                    statusRecieved.set(true);
+                }
+            }
+
+            @Override
+            public void message(PubNub pubnub, PNMessageResult message) {
+            }
+
+            @Override
+            public void presence(PubNub pubnub, PNPresenceEventResult presence) {
+            }
+        };
+
+        pubnub.addListener(sub1);
+
+        pubnub.presence().channels(Arrays.asList("ch1", "ch2")).connected(true).execute();
+
+
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAtomic(statusRecieved, org.hamcrest.core.IsEqual.equalTo(true));
+    }
+
+    @Test
+    public void testAllHeartbeatsLeaveViaPresence() {
+
+        final AtomicBoolean statusRecieved = new AtomicBoolean();
+        pubnub.getConfiguration().setHeartbeatNotificationOptions(PNHeartbeatNotificationOptions.ALL);
+
+        stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/ch1,ch2/leave"))
+                .willReturn(aResponse().withBody("{\"status\": 200, \"message\": \"OK\", \"service\": \"Presence\", \"action\": \"leave\"}")));
+
+        SubscribeCallback sub1 = new SubscribeCallback() {
+            @Override
+            public void status(PubNub pubnub, PNStatus status) {
+                if (status.getOperation() == PNOperationType.PNUnsubscribeOperation && !status.isError()) {
+                    statusRecieved.set(true);
+                }
+            }
+
+            @Override
+            public void message(PubNub pubnub, PNMessageResult message) {
+            }
+
+            @Override
+            public void presence(PubNub pubnub, PNPresenceEventResult presence) {
+            }
+        };
+
+        pubnub.addListener(sub1);
+
+        pubnub.presence().channels(Arrays.asList("ch1", "ch2")).connected(false).execute();
+
+
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAtomic(statusRecieved, org.hamcrest.core.IsEqual.equalTo(true));
+    }
+
+    @Test
     public void testSuccessOnFailureVerbosityHeartbeats() {
 
         final AtomicBoolean statusRecieved = new AtomicBoolean();
