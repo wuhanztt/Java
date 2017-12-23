@@ -16,6 +16,9 @@ public class PresenceBuilder extends PubSubBuilder {
     @Setter(AccessLevel.PUBLIC)
     private boolean connected;
 
+    @Setter(AccessLevel.PUBLIC)
+    private Object state;
+
     public PresenceBuilder(SubscriptionManager subscriptionManager) {
         super(subscriptionManager);
     }
@@ -30,6 +33,11 @@ public class PresenceBuilder extends PubSubBuilder {
         this.getSubscriptionManager().adaptPresenceBuilder(presenceOperation);
     }
 
+    public PresenceBuilder connected(boolean connected) {
+        this.connected = connected;
+        return this;
+    }
+
     public PresenceBuilder channels(List<String> channels) {
         return (PresenceBuilder) super.channels(channels);
     }
@@ -38,4 +46,8 @@ public class PresenceBuilder extends PubSubBuilder {
         return (PresenceBuilder) super.channelGroups(channelGroups);
     }
 
+    public PresenceBuilder state(Object state) {
+        this.state = state;
+        return this;
+    }
 }
