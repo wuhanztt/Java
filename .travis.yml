@@ -2,7 +2,7 @@ language: java
 sudo: false
 dist: xenial
 jdk:
-  - oraclejdk8
+  - oraclejdk9
 
 before_install:
   - wget https://oss.sonatype.org/service/local/repositories/releases/content/com/codacy/codacy-coverage-reporter/2.0.0/codacy-coverage-reporter-2.0.0-assembly.jar
