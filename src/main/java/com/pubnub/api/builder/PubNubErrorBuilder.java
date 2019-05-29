@@ -1,7 +1,7 @@
 package com.pubnub.api.builder;
 
 import com.pubnub.api.PubNubError;
-
+import com.pubnub.api.PubNubError2;
 
 public final class PubNubErrorBuilder {
 
