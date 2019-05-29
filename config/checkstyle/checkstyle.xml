@@ -177,6 +177,7 @@
 
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->
+        <!-- See http://checkstyle.sf.net/config_misc.html 2-->
         <module name="ArrayTypeStyle"/>
         <!-- <module name="FinalParameters"/> -->
         <!-- <module name="TodoComment"/> -->
